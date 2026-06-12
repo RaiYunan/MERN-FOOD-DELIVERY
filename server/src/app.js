@@ -16,9 +16,6 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 
-app.use((req, res) => {
-  res.status(404).json({ message: 'Route not found' })
-})
 
 app.use((err, req, res, next) => {
   console.error(err.stack)
