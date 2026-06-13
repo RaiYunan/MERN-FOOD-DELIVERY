@@ -33,3 +33,15 @@ export const restrictTo = (...roles) => {
     next()
   }
 }
+
+// ─── Role-based authorization ─────────────────────────
+export const authorize = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        message: `Access denied. Requires role: ${roles.join(' or ')}`,
+      })
+    }
+    next()
+  }
+}

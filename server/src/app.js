@@ -3,6 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 
 import authRoutes from './routes/auth.routes.js'
+import productRoutes from './routes/product.routes.js'
 
 const app = express()
 
@@ -15,6 +16,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/auth', authRoutes)
+app.use('/api/products', productRoutes)
 
 
 app.use((err, req, res, next) => {

@@ -4,7 +4,7 @@ import generateOTP from '../utils/generateOTP.js'
 import sendEmail from '../utils/sendEmail.js'
 import bcrypt from 'bcryptjs'
 
-export const register = async (req, res,next) => {
+export const register = async (req, res, next) => {
   try {
     const { name, email, password, phone } = req.body
 
@@ -85,7 +85,7 @@ export const getMe = async (req, res) => {
 }
 
 //Forgot Password send OTP
-export const forgotPassword = async (req, res,next) => {
+export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body
 
@@ -117,8 +117,9 @@ export const forgotPassword = async (req, res,next) => {
       message: 'OTP sent to your email',
     })
   } catch (err) {
+    console.error(err);
+    console.log("next =", next);
     next(err);
-    res.status(500).json({ message: err.message })
   }
 }
 
