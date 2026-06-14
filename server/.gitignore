@@ -17,3 +17,5 @@ dist/
 build/
 *.pid
 *.seed
+
+uploads/
