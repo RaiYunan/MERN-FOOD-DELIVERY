@@ -32,6 +32,16 @@ export const getProducts = asyncHandler(async (req, res) => {
   })
 })
 
+// Get All Products including unavailable (Admin)
+export const getAllProductsAdmin = asyncHandler(async (req, res) => {
+  const products = await Product.find().sort({ createdAt: -1 })
+
+  res.status(200).json({
+    success: true,
+    count: products.length,
+    products,
+  })
+})
 // Get Single Product
 export const getProduct = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id)
@@ -45,16 +55,24 @@ export const getProduct = asyncHandler(async (req, res) => {
 
 // Update Product (Admin only) 
 export const updateProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  })
+  const product = await Product.findById(req.params.id)
 
   if (!product) {
     throw new ApiError(404, 'Product not found')
   }
 
-  res.status(200).json({ success: true, product })
+
+  if (req.file) {
+    removeFile(product.image)
+    req.body.image = `/uploads/products/${req.file.filename}`
+  }
+
+  const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  })
+
+  res.status(200).json({ success: true, product: updatedProduct })
 })
 
 // Delete Product (Admin only) 
@@ -65,5 +83,26 @@ export const deleteProduct = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'Product not found')
   }
 
+
+  removeFile(product.image)
+
   res.status(200).json({ success: true, message: 'Product deleted' })
+})
+
+// Toggle Product Status (Admin only)
+export const toggleProductStatus = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id)
+
+  if (!product) {
+    throw new ApiError(404, 'Product not found')
+  }
+
+  product.isAvailable = !product.isAvailable
+  await product.save()
+
+  res.status(200).json({
+    success: true,
+    message: `Product is now ${product.isAvailable ? 'available' : 'unavailable'}`,
+    product,
+  })
 })

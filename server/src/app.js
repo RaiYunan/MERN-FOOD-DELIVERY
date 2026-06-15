@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import authRoutes from './routes/auth.routes.js'
 import productRoutes from './routes/product.routes.js'
+import adminRoutes from './routes/admin.routes.js'
 import errorHandler from './middlewares/error.middleware.js'
 import ApiError from './utils/ApiError.js'
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/products', productRoutes)
+app.use('/api/admin', adminRoutes)
 
 
 app.use((req, res, next) => {
