@@ -67,6 +67,18 @@ const orderSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    khaltiPidx: {
+      type: String,
+      default: null,
+    },
+    khaltiTransactionId: {
+      type: String,
+      default: null,
+    },
+    paidAt: {
+      type: Date,
+      default: null,
+    },
   },
   { timestamps: true }
 )

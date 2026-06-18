@@ -11,6 +11,8 @@ import reviewRoutes from './routes/review.routes.js'
 import profileRoutes from './routes/profile.routes.js'
 import cartRoutes from './routes/cart.routes.js'
 import orderRoutes from './routes/order.routes.js'
+import paymentRoutes from './routes/payment.routes.js'
+
 
 import errorHandler from './middlewares/error.middleware.js'
 import ApiError from './utils/ApiError.js'
@@ -39,6 +41,7 @@ app.use('/api/reviews', reviewRoutes)
 app.use('/api/profile', profileRoutes)
 app.use('/api/cart', cartRoutes)
 app.use('/api/orders', orderRoutes)
+app.use('/api/payment', paymentRoutes)
 
 app.use((req, res, next) => {
   next(new ApiError(404, `Route ${req.originalUrl} not found`))
