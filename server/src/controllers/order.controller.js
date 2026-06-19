@@ -3,6 +3,7 @@ import Cart from '../models/cart.model.js'
 import Product from '../models/product.model.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import ApiError from '../utils/ApiError.js'
+import { getIO } from '../socket/index.js'
 
 // Place order from cart 
 export const placeOrder = asyncHandler(async (req, res) => {
@@ -32,7 +33,7 @@ export const placeOrder = asyncHandler(async (req, res) => {
     product: item.product._id,
     name: item.product.name,
     image: item.product.image,
-    price: item.price, 
+    price: item.price,
     quantity: item.quantity,
   }))
 
@@ -49,6 +50,14 @@ export const placeOrder = asyncHandler(async (req, res) => {
   await cart.save()
 
   await order.populate('user', 'name email phone')
+
+  getIO().to('admins').emit('newOrder', {
+    orderId: order._id,
+    customerName: order.user.name,
+    totalAmount: order.totalAmount,
+    itemCount: order.items.length,
+    createdAt: order.createdAt,
+  })
 
   res.status(201).json({ success: true, order })
 })
@@ -104,7 +113,13 @@ export const cancelMyOrder = asyncHandler(async (req, res) => {
   order.status = 'cancelled'
   order.cancelledAt = Date.now()
   order.cancelReason = reason || 'Cancelled by user'
+
   await order.save()
+
+  getIO().to('admins').emit('orderCancelled', {
+    orderId: order._id,
+    reason: order.cancelReason,
+  })
 
   res.status(200).json({
     success: true,
@@ -198,6 +213,18 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
   }
 
   await order.save()
+
+  getIO().to(`user:${order.user}`).emit('orderStatusUpdate', {
+    orderId: order._id,
+    status: order.status,
+    deliveredAt: order.deliveredAt,
+  })
+
+  getIO().to(`order:${order._id}`).emit('orderStatusUpdate', {
+    orderId: order._id,
+    status: order.status,
+    deliveredAt: order.deliveredAt,
+  })
 
   res.status(200).json({
     success: true,
