@@ -87,7 +87,7 @@ function Navbar() {
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="p-2.5 rounded-full text-ink/70 dark:text-text-dark/70 hover:bg-clay-light dark:hover:bg-card-dark transition-colors"
+            className="p-2.5 rounded-full text-ink/70 dark:text-text-dark/70 hover:bg-clay-light dark:hover:bg-card-dark transition-colors cursor-pointer"
           >
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
@@ -112,7 +112,7 @@ function Navbar() {
               <button
                 type="button"
                 onClick={() => setDropdownOpen((o) => !o)}
-                className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-clay-light dark:hover:bg-card-dark transition-colors"
+                className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-clay-light dark:hover:bg-card-dark transition-colors cursor-pointer"
               >
                 <span className="w-8 h-8 rounded-full bg-chili text-cream font-body font-semibold text-xs flex items-center justify-center">
                   {initials}
