@@ -35,12 +35,10 @@ const cartSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-// auto-calculate totalAmount before save
-cartSchema.pre('save', function (next) {
+cartSchema.pre('save', function () {
   this.totalAmount = this.items.reduce((total, item) => {
     return total + item.price * item.quantity
   }, 0)
-  next()
 })
 
 const Cart = mongoose.model('Cart', cartSchema)

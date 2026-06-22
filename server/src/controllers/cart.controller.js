@@ -24,42 +24,36 @@ export const getCart = asyncHandler(async (req, res) => {
 export const addToCart = asyncHandler(async (req, res) => {
   const { productId, quantity = 1 } = req.body
 
-  if (quantity < 1) {
-    throw new ApiError(400, 'Quantity must be at least 1')
-  }
+  if (quantity < 1) throw new ApiError(400, 'Quantity must be at least 1')
 
   const product = await Product.findById(productId)
-  if (!product) {
-    throw new ApiError(404, 'Product not found')
-  }
-
-  if (!product.isAvailable) {
-    throw new ApiError(400, 'Product is currently unavailable')
-  }
+  if (!product) throw new ApiError(404, 'Product not found')
+  if (!product.isAvailable) throw new ApiError(400, 'Product is currently unavailable')
 
   let cart = await Cart.findOne({ user: req.user._id })
 
   if (!cart) {
-    // create new cart for user
-    cart = await Cart.create({
+    cart = new Cart({
       user: req.user._id,
-      items: [{ product: productId, quantity, price: product.price }],
+      items: [],
     })
-  } else {
-    // check if product already in cart
-    const existingItem = cart.items.find(
-      (item) => item.product.toString() === productId
-    )
-
-    if (existingItem) {
-      existingItem.quantity += quantity
-    } else {
-      cart.items.push({ product: productId, quantity, price: product.price })
-    }
-
-    await cart.save()
   }
 
+  const existingItem = cart.items.find(
+    (item) => item.product.toString() === productId
+  )
+
+  if (existingItem) {
+    existingItem.quantity += quantity
+  } else {
+    cart.items.push({
+      product: productId,
+      quantity,
+      price: product.price,
+    })
+  }
+
+  await cart.save()
   await cart.populate('items.product', 'name image price isAvailable')
 
   res.status(200).json({ success: true, cart })

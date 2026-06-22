@@ -1,6 +1,7 @@
 import ApiError from '../utils/ApiError.js'
 
 const errorHandler = (err, req, res, next) => {
+  console.error('ERROR DETAILS:', err.name, err.message, err.stack) 
   let error = err
 
   // Mongoose bad ObjectId
