@@ -41,7 +41,6 @@ const handleAddToCart = async () => {
     return
   }
   await dispatch(addToCart({ productId: product._id, quantity }))
-  toast.success(`Added ${quantity} x ${product.name} to cart`)
 }
 
   if (selectedStatus === 'loading' || !product) {

@@ -9,6 +9,7 @@ import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
+import About from "@/pages/About";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ export const router = createBrowserRouter([
       { path: "register", element: <Register /> },
       { path: "menu", element: <Menu /> },
       { path: "menu/:id", element: <ProductDetail /> },
+      { path: "about", element: <About /> },
 
       // protected - logged in users only
       {
