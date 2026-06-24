@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Cart from "@/pages/Cart";
 import Checkout from "@/pages/Checkout";
 import About from "@/pages/About";
+import Profile from "../pages/Profile";
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +31,7 @@ export const router = createBrowserRouter([
         children: [
           { path: "cart", element: <Cart /> },
           { path: "checkout", element: <Checkout /> },
-          // { path: 'profile', element: <Profile /> },
+          { path: 'profile', element: <Profile /> },
           // { path: 'orders', element: <Orders /> },
         ],
       },
