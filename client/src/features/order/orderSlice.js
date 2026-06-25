@@ -85,6 +85,7 @@ const orderSlice = createSlice({
         state.status = 'loading'
       })
       .addCase(getMyOrders.fulfilled, (state, action) => {
+        console.log('ORDER SAMPLE:', JSON.stringify(action.payload[0], null, 2))
         state.status = 'succeeded'
         state.orders = action.payload
       })
