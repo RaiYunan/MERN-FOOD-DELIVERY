@@ -12,6 +12,9 @@ import Checkout from "@/pages/Checkout";
 import About from "@/pages/About";
 import Profile from "../pages/Profile";
 import Orders from "../pages/Orders";
+import AdminLayout from "@/layouts/AdminLayout";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminOrders from "@/pages/admin/AdminOrders";
 
 export const router = createBrowserRouter([
   {
@@ -32,18 +35,27 @@ export const router = createBrowserRouter([
         children: [
           { path: "cart", element: <Cart /> },
           { path: "checkout", element: <Checkout /> },
-          { path: 'profile', element: <Profile /> },
-          { path: 'orders', element: <Orders /> },
+          { path: "profile", element: <Profile /> },
+          { path: "orders", element: <Orders /> },
         ],
       },
 
       // protected - admin only
+
       {
+        path: "/admin",
         element: <ProtectedRoute adminOnly />,
         children: [
-          // { path: 'admin', element: <AdminDashboard /> },
+          {
+            element: <AdminLayout />,
+            children: [
+              { index: true, element: <AdminDashboard /> },
+              { path: "orders", element: <AdminOrders /> },
+            ],
+          },
         ],
       },
     ],
   },
 ]);
+
