@@ -6,6 +6,8 @@ import { useTheme } from '@/context/ThemeContext'
 import {
   LayoutDashboard,
   ClipboardList,
+  UtensilsCrossed,
+  Users,
   LogOut,
   Sun,
   Moon,
@@ -15,8 +17,10 @@ import {
 } from 'lucide-react'
 
 const navItems = [
-  { label: 'Dashboard', to: '/admin',        icon: LayoutDashboard, end: true },
-  { label: 'Orders',    to: '/admin/orders', icon: ClipboardList },
+  { label: 'Dashboard', to: '/admin',          icon: LayoutDashboard,  end: true },
+  { label: 'Orders',    to: '/admin/orders',   icon: ClipboardList },
+  { label: 'Products',  to: '/admin/products', icon: UtensilsCrossed },
+  { label: 'Users',     to: '/admin/users',    icon: Users },
 ]
 
 function Sidebar({ onClose }) {
@@ -42,10 +46,7 @@ function Sidebar({ onClose }) {
         <span className="font-display text-xl font-bold text-cream">Khaja.</span>
         <span className="ml-2 font-body text-xs text-cream/40 font-medium">admin</span>
         {onClose && (
-          <button
-            onClick={onClose}
-            className="ml-auto text-cream/50 hover:text-cream transition-colors"
-          >
+          <button onClick={onClose} className="ml-auto text-cream/50 hover:text-cream transition-colors">
             <X size={18} />
           </button>
         )}

@@ -15,6 +15,8 @@ import Orders from "../pages/Orders";
 import AdminLayout from "@/layouts/AdminLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminOrders from "@/pages/admin/AdminOrders";
+import AdminUsers from "@/pages/admin/AdminUsers";
+import AdminProducts from "@/pages/admin/AdminProducts";
 
 export const router = createBrowserRouter([
   {
@@ -41,7 +43,6 @@ export const router = createBrowserRouter([
       },
 
       // protected - admin only
-
       {
         path: "/admin",
         element: <ProtectedRoute adminOnly />,
@@ -51,6 +52,8 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <AdminDashboard /> },
               { path: "orders", element: <AdminOrders /> },
+              { path: "products", element: <AdminProducts /> },
+              { path: "users", element: <AdminUsers /> },
             ],
           },
         ],
@@ -58,4 +61,3 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
-
