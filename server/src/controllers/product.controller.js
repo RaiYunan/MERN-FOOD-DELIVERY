@@ -1,6 +1,7 @@
 import Product from '../models/product.model.js'
 import asyncHandler from '../utils/asyncHandler.js'
 import ApiError from '../utils/ApiError.js'
+import removeFile from '../utils/removeFile.js'
 
 // Create Product (Admin only)
 export const createProduct = async (req, res) => {
@@ -11,7 +12,7 @@ export const createProduct = async (req, res) => {
     description,
     price,
     category,
-    image: req.file ? `/uploads/products/${req.file.filename}` : '',
+    image: req.file ? req.file.path : '',
     createdBy: req.user._id,
   })
 
@@ -61,10 +62,9 @@ export const updateProduct = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'Product not found')
   }
 
-
   if (req.file) {
-    removeFile(product.image)
-    req.body.image = `/uploads/products/${req.file.filename}`
+    if (product.image) removeFile(product.image)
+    req.body.image = req.file.path
   }
 
   const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, {
@@ -77,14 +77,17 @@ export const updateProduct = asyncHandler(async (req, res) => {
 
 // Delete Product (Admin only) 
 export const deleteProduct = asyncHandler(async (req, res) => {
-  const product = await Product.findByIdAndDelete(req.params.id)
+  const product = await Product.findById(req.params.id)
 
   if (!product) {
     throw new ApiError(404, 'Product not found')
   }
 
+  if (product.image && !product.image.startsWith('http')) {
+    removeFile(product.image)
+  }
 
-  removeFile(product.image)
+  await product.deleteOne()
 
   res.status(200).json({ success: true, message: 'Product deleted' })
 })

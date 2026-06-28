@@ -1,21 +1,18 @@
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+import cloudinary from '../config/cloudinary.js'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const removeFile = async (imageUrl) => {
+  if (!imageUrl) return
+  if (!imageUrl.includes('cloudinary.com')) return
 
-const removeFile = (filePath) => {
-  if (!filePath) return
-
-  // filePath is stored like "/uploads/products/xyz.jpg"
-  const fullPath = path.join(__dirname, '..', '..', filePath)
-
-  fs.unlink(fullPath, (err) => {
-    if (err && err.code !== 'ENOENT') {
-      console.error(`Failed to delete file: ${fullPath}`, err.message)
-    }
-  })
+  try {
+    const parts   = imageUrl.split('/')
+    const filename = parts.at(-1).split('.')[0]
+    const folder   = parts.at(-2)
+    const publicId = `${folder}/${filename}`
+    await cloudinary.uploader.destroy(publicId)
+  } catch (err) {
+    console.error('Cloudinary delete failed:', err.message)
+  }
 }
 
 export default removeFile

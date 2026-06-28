@@ -1,38 +1,53 @@
-import { useEffect, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useEffect, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   fetchAllProductsAdmin,
   createProduct,
   updateProduct,
   deleteProduct,
   toggleProductStatus,
-} from '@/features/admin/adminSlice'
-import { Plus, Pencil, Trash2, Eye, EyeOff, X, Leaf, Flame } from 'lucide-react'
+} from "@/features/admin/adminSlice";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Eye,
+  EyeOff,
+  X,
+  Leaf,
+  Flame,
+} from "lucide-react";
 
-const CATEGORIES = ['appetizer', 'main_course', 'dessert', 'beverage', 'fast_food']
+const CATEGORIES = [
+  "appetizer",
+  "main_course",
+  "dessert",
+  "beverage",
+  "fast_food",
+];
 const CATEGORY_LABEL = {
-  appetizer: 'Appetizer',
-  main_course: 'Main course',
-  dessert: 'Dessert',
-  beverage: 'Beverage',
-  fast_food: 'Fast food',
-}
-const SPICE_LEVELS = ['none', 'mild', 'medium', 'hot']
+  appetizer: "Appetizer",
+  main_course: "Main course",
+  dessert: "Dessert",
+  beverage: "Beverage",
+  fast_food: "Fast food",
+};
+const SPICE_LEVELS = ["none", "mild", "medium", "hot"];
 
 const EMPTY_FORM = {
-  name: '',
-  description: '',
-  price: '',
-  category: 'main_course',
+  name: "",
+  description: "",
+  price: "",
+  category: "main_course",
   isVeg: true,
-  spiceLevel: 'none',
+  spiceLevel: "none",
   isPopular: false,
   isAvailable: true,
-}
+};
 
 function ProductModal({ product, onClose }) {
-  const dispatch = useAppDispatch()
-  const isEdit = !!product
+  const dispatch = useAppDispatch();
+  const isEdit = !!product;
   const [form, setForm] = useState(
     isEdit
       ? {
@@ -45,43 +60,52 @@ function ProductModal({ product, onClose }) {
           isPopular: product.isPopular,
           isAvailable: product.isAvailable,
         }
-      : EMPTY_FORM
-  )
-  const [imageFile, setImageFile] = useState(null)
-  const [submitting, setSubmitting] = useState(false)
+      : EMPTY_FORM,
+  );
+  const [imageFile, setImageFile] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
-  }
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   const handleSubmit = async () => {
-    if (!form.name || !form.price || !form.category) return
-    setSubmitting(true)
+    if (!form.name || !form.price || !form.category) return;
+    setSubmitting(true);
 
-    const fd = new FormData()
-    Object.entries(form).forEach(([k, v]) => fd.append(k, v))
-    if (imageFile) fd.append('image', imageFile)
+    const fd = new FormData();
+    Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+    if (imageFile) fd.append("image", imageFile);
 
     if (isEdit) {
-      await dispatch(updateProduct({ id: product._id, formData: fd }))
+      await dispatch(updateProduct({ id: product._id, formData: fd }));
     } else {
-      await dispatch(createProduct(fd))
+      await dispatch(createProduct(fd));
     }
 
-    setSubmitting(false)
-    onClose()
-  }
+    setSubmitting(false);
+    onClose();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-ink/50 dark:bg-ink/70 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-ink/50 dark:bg-ink/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative z-10 w-full max-w-lg bg-cream dark:bg-card-dark border border-clay dark:border-border-dark rounded-sm shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-5 border-b border-clay dark:border-border-dark">
           <h3 className="font-display text-xl font-bold text-ink dark:text-text-dark">
-            {isEdit ? 'Edit product' : 'New product'}
+            {isEdit ? "Edit product" : "New product"}
           </h3>
-          <button onClick={onClose} className="text-ink/40 dark:text-text-dark/40 hover:text-ink dark:hover:text-text-dark transition-colors">
+          <button
+            onClick={onClose}
+            className="text-ink/40 dark:text-text-dark/40 hover:text-ink dark:hover:text-text-dark transition-colors"
+          >
             <X size={18} />
           </button>
         </div>
@@ -139,7 +163,9 @@ function ProductModal({ product, onClose }) {
                 className="w-full bg-clay-light/50 dark:bg-surface-dark border border-clay dark:border-border-dark px-4 py-2.5 font-body text-sm text-ink dark:text-text-dark outline-none focus:border-chili rounded-sm transition-colors cursor-pointer"
               >
                 {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{CATEGORY_LABEL[c]}</option>
+                  <option key={c} value={c}>
+                    {CATEGORY_LABEL[c]}
+                  </option>
                 ))}
               </select>
             </div>
@@ -157,7 +183,9 @@ function ProductModal({ product, onClose }) {
                 className="w-full bg-clay-light/50 dark:bg-surface-dark border border-clay dark:border-border-dark px-4 py-2.5 font-body text-sm text-ink dark:text-text-dark outline-none focus:border-chili rounded-sm transition-colors cursor-pointer capitalize"
               >
                 {SPICE_LEVELS.map((s) => (
-                  <option key={s} value={s} className="capitalize">{s}</option>
+                  <option key={s} value={s} className="capitalize">
+                    {s}
+                  </option>
                 ))}
               </select>
             </div>
@@ -176,11 +204,14 @@ function ProductModal({ product, onClose }) {
 
           <div className="flex flex-wrap gap-5 pt-1">
             {[
-              { name: 'isVeg',       label: 'Vegetarian' },
-              { name: 'isPopular',   label: 'Mark as popular' },
-              { name: 'isAvailable', label: 'Available' },
+              { name: "isVeg", label: "Vegetarian" },
+              { name: "isPopular", label: "Mark as popular" },
+              { name: "isAvailable", label: "Available" },
             ].map(({ name, label }) => (
-              <label key={name} className="flex items-center gap-2 cursor-pointer">
+              <label
+                key={name}
+                className="flex items-center gap-2 cursor-pointer"
+              >
                 <input
                   type="checkbox"
                   name={name}
@@ -188,7 +219,9 @@ function ProductModal({ product, onClose }) {
                   onChange={handleChange}
                   className="w-4 h-4 accent-chili"
                 />
-                <span className="font-body text-sm text-ink/70 dark:text-text-dark/70">{label}</span>
+                <span className="font-body text-sm text-ink/70 dark:text-text-dark/70">
+                  {label}
+                </span>
               </label>
             ))}
           </div>
@@ -200,7 +233,11 @@ function ProductModal({ product, onClose }) {
             disabled={submitting}
             className="flex-1 bg-ink dark:bg-chili hover:bg-chili dark:hover:bg-chili-dark text-cream font-body font-semibold text-sm py-3 rounded-sm transition-colors disabled:opacity-50"
           >
-            {submitting ? 'Saving…' : isEdit ? 'Save changes' : 'Create product'}
+            {submitting
+              ? "Saving…"
+              : isEdit
+                ? "Save changes"
+                : "Create product"}
           </button>
           <button
             onClick={onClose}
@@ -211,13 +248,16 @@ function ProductModal({ product, onClose }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function DeleteModal({ product, onClose, onConfirm }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-ink/50 dark:bg-ink/70 backdrop-blur-sm" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-ink/50 dark:bg-ink/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
       <div className="relative z-10 w-full max-w-sm bg-cream dark:bg-card-dark border border-clay dark:border-border-dark rounded-sm p-7 shadow-2xl">
         <h3 className="font-display text-xl font-bold text-ink dark:text-text-dark mb-1">
           Delete {product.name}?
@@ -241,26 +281,26 @@ function DeleteModal({ product, onClose, onConfirm }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function AdminProducts() {
-  const dispatch = useAppDispatch()
-  const { products, productsStatus } = useAppSelector((s) => s.admin)
-  const [modal, setModal] = useState(null)
-  const [pendingDelete, setPendingDelete] = useState(null)
-  const [categoryFilter, setCategoryFilter] = useState('')
-  const [search, setSearch] = useState('')
+  const dispatch = useAppDispatch();
+  const { products, productsStatus } = useAppSelector((s) => s.admin);
+  const [modal, setModal] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    dispatch(fetchAllProductsAdmin())
-  }, [dispatch])
+    dispatch(fetchAllProductsAdmin());
+  }, [dispatch]);
 
   const filtered = products.filter((p) => {
-    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase())
-    const matchCat = categoryFilter ? p.category === categoryFilter : true
-    return matchSearch && matchCat
-  })
+    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
+    const matchCat = categoryFilter ? p.category === categoryFilter : true;
+    return matchSearch && matchCat;
+  });
 
   return (
     <>
@@ -270,9 +310,11 @@ export default function AdminProducts() {
             Manage
           </p>
           <div className="flex items-end justify-between gap-4">
-            <h1 className="font-display text-4xl font-bold text-ink dark:text-text-dark">Products</h1>
+            <h1 className="font-display text-4xl font-bold text-ink dark:text-text-dark">
+              Products
+            </h1>
             <button
-              onClick={() => setModal('create')}
+              onClick={() => setModal("create")}
               className="inline-flex items-center gap-2 bg-ink dark:bg-chili hover:bg-chili dark:hover:bg-chili-dark text-cream font-body font-semibold text-sm px-5 py-2.5 rounded-sm transition-colors mb-1"
             >
               <Plus size={15} />
@@ -296,21 +338,27 @@ export default function AdminProducts() {
           >
             <option value="">All categories</option>
             {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{CATEGORY_LABEL[c]}</option>
+              <option key={c} value={c}>
+                {CATEGORY_LABEL[c]}
+              </option>
             ))}
           </select>
         </div>
 
-        {productsStatus === 'loading' && (
+        {productsStatus === "loading" && (
           <div className="flex items-center gap-3 py-16">
             <div className="w-5 h-5 border-2 border-chili border-t-transparent rounded-full animate-spin" />
-            <p className="font-body text-sm text-ink/40 dark:text-text-dark/40">Loading products…</p>
+            <p className="font-body text-sm text-ink/40 dark:text-text-dark/40">
+              Loading products…
+            </p>
           </div>
         )}
 
-        {productsStatus === 'succeeded' && filtered.length === 0 && (
+        {productsStatus === "succeeded" && filtered.length === 0 && (
           <div className="py-20 text-center border border-clay/50 dark:border-border-dark rounded-sm">
-            <p className="font-body text-sm text-ink/40 dark:text-text-dark/40">No products found.</p>
+            <p className="font-body text-sm text-ink/40 dark:text-text-dark/40">
+              No products found.
+            </p>
           </div>
         )}
 
@@ -320,7 +368,15 @@ export default function AdminProducts() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-clay dark:border-border-dark bg-clay-light/50 dark:bg-surface-dark">
-                    {['Product', 'Category', 'Price', 'Flags', 'Status', 'Rating', 'Actions'].map((h) => (
+                    {[
+                      "Product",
+                      "Category",
+                      "Price",
+                      "Flags",
+                      "Status",
+                      "Rating",
+                      "Actions",
+                    ].map((h) => (
                       <th
                         key={h}
                         className="text-left px-4 py-3 font-body text-xs uppercase tracking-widest text-ink/40 dark:text-text-dark/40 font-semibold whitespace-nowrap"
@@ -340,7 +396,11 @@ export default function AdminProducts() {
                         <div className="flex items-center gap-3">
                           {product.image ? (
                             <img
-                              src={`${import.meta.env.VITE_API_URL}${product.image}`}
+                              src={
+                                product.image.startsWith("http")
+                                  ? product.image
+                                  : `${import.meta.env.VITE_API_URL}${product.image}`
+                              }
                               alt={product.name}
                               className="w-9 h-9 rounded-sm object-cover shrink-0 bg-clay-light dark:bg-surface-dark"
                             />
@@ -361,7 +421,7 @@ export default function AdminProducts() {
                         {CATEGORY_LABEL[product.category] || product.category}
                       </td>
                       <td className="px-4 py-3.5 font-body text-sm font-semibold text-ink dark:text-text-dark whitespace-nowrap">
-                        Rs. {product.price.toLocaleString('en-NP')}
+                        Rs. {product.price.toLocaleString("en-NP")}
                       </td>
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
@@ -370,37 +430,55 @@ export default function AdminProducts() {
                               <Leaf size={13} className="text-cardamom" />
                             </span>
                           )}
-                          {product.spiceLevel !== 'none' && (
+                          {product.spiceLevel !== "none" && (
                             <span title={`Spice: ${product.spiceLevel}`}>
                               <Flame size={13} className="text-chili" />
                             </span>
                           )}
                           {product.isPopular && (
-                            <span className="font-body text-xs font-semibold text-turmeric">Popular</span>
+                            <span className="font-body text-xs font-semibold text-turmeric">
+                              Popular
+                            </span>
                           )}
                         </div>
                       </td>
                       <td className="px-4 py-3.5 whitespace-nowrap">
-                        <span className={`inline-flex items-center gap-1.5 font-body text-xs font-semibold ${
-                          product.isAvailable ? 'text-cardamom' : 'text-ink/40 dark:text-text-dark/40'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${product.isAvailable ? 'bg-cardamom' : 'bg-clay'}`} />
-                          {product.isAvailable ? 'Available' : 'Hidden'}
+                        <span
+                          className={`inline-flex items-center gap-1.5 font-body text-xs font-semibold ${
+                            product.isAvailable
+                              ? "text-cardamom"
+                              : "text-ink/40 dark:text-text-dark/40"
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${product.isAvailable ? "bg-cardamom" : "bg-clay"}`}
+                          />
+                          {product.isAvailable ? "Available" : "Hidden"}
                         </span>
                       </td>
                       <td className="px-4 py-3.5 font-body text-sm text-ink/60 dark:text-text-dark/60 whitespace-nowrap">
                         {product.averageRating > 0
                           ? `${product.averageRating.toFixed(1)} (${product.totalReviews})`
-                          : '—'}
+                          : "—"}
                       </td>
                       <td className="px-4 py-3.5 whitespace-nowrap">
                         <div className="flex items-center gap-1">
                           <button
-                            onClick={() => dispatch(toggleProductStatus(product._id))}
-                            title={product.isAvailable ? 'Hide product' : 'Show product'}
+                            onClick={() =>
+                              dispatch(toggleProductStatus(product._id))
+                            }
+                            title={
+                              product.isAvailable
+                                ? "Hide product"
+                                : "Show product"
+                            }
                             className="p-2 rounded-sm text-ink/40 dark:text-text-dark/40 hover:text-turmeric hover:bg-turmeric/10 transition-colors"
                           >
-                            {product.isAvailable ? <EyeOff size={15} /> : <Eye size={15} />}
+                            {product.isAvailable ? (
+                              <EyeOff size={15} />
+                            ) : (
+                              <Eye size={15} />
+                            )}
                           </button>
                           <button
                             onClick={() => setModal(product)}
@@ -429,7 +507,7 @@ export default function AdminProducts() {
 
       {modal && (
         <ProductModal
-          product={modal === 'create' ? null : modal}
+          product={modal === "create" ? null : modal}
           onClose={() => setModal(null)}
         />
       )}
@@ -439,11 +517,11 @@ export default function AdminProducts() {
           product={pendingDelete}
           onClose={() => setPendingDelete(null)}
           onConfirm={() => {
-            dispatch(deleteProduct(pendingDelete._id))
-            setPendingDelete(null)
+            dispatch(deleteProduct(pendingDelete._id));
+            setPendingDelete(null);
           }}
         />
       )}
     </>
-  )
+  );
 }
