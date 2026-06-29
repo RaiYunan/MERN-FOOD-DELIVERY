@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as authAPI from './authAPI'
 import toast from 'react-hot-toast'
 
-// Thunks
 export const register = createAsyncThunk(
   'auth/register',
   async (formData, { rejectWithValue }) => {
@@ -39,12 +38,47 @@ export const fetchMe = createAsyncThunk(
   }
 )
 
-// Slice
+export const forgotPassword = createAsyncThunk(
+  'auth/forgotPassword',
+  async (email, { rejectWithValue }) => {
+    try {
+      const { data } = await authAPI.forgotPasswordAPI(email)
+      return data
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to send OTP')
+    }
+  }
+)
+
+export const verifyOTP = createAsyncThunk(
+  'auth/verifyOTP',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await authAPI.verifyOTPAPI(payload)
+      return data
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Invalid OTP')
+    }
+  }
+)
+
+export const resetPassword = createAsyncThunk(
+  'auth/resetPassword',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await authAPI.resetPasswordAPI(payload)
+      return data
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to reset password')
+    }
+  }
+)
+
 const initialState = {
   user: null,
   token: localStorage.getItem('token') || null,
   isAuthenticated: !!localStorage.getItem('token'),
-  status: 'idle', // idle | loading | succeeded | failed
+  status: 'idle',
   error: null,
 }
 
@@ -61,11 +95,7 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // register
-      .addCase(register.pending, (state) => {
-        state.status = 'loading'
-        state.error = null
-      })
+      .addCase(register.pending, (state) => { state.status = 'loading'; state.error = null })
       .addCase(register.fulfilled, (state, action) => {
         state.status = 'succeeded'
         state.user = action.payload.user
@@ -80,11 +110,7 @@ const authSlice = createSlice({
         toast.error(action.payload)
       })
 
-      // login
-      .addCase(login.pending, (state) => {
-        state.status = 'loading'
-        state.error = null
-      })
+      .addCase(login.pending, (state) => { state.status = 'loading'; state.error = null })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'succeeded'
         state.user = action.payload.user
@@ -99,7 +125,6 @@ const authSlice = createSlice({
         toast.error(action.payload)
       })
 
-      // fetchMe
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.user = action.payload
         state.isAuthenticated = true
@@ -109,6 +134,27 @@ const authSlice = createSlice({
         state.token = null
         state.isAuthenticated = false
         localStorage.removeItem('token')
+      })
+
+      .addCase(forgotPassword.pending, (state) => { state.status = 'loading'; state.error = null })
+      .addCase(forgotPassword.fulfilled, (state) => { state.status = 'succeeded' })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.payload
+      })
+
+      .addCase(verifyOTP.pending, (state) => { state.status = 'loading'; state.error = null })
+      .addCase(verifyOTP.fulfilled, (state) => { state.status = 'succeeded' })
+      .addCase(verifyOTP.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.payload
+      })
+
+      .addCase(resetPassword.pending, (state) => { state.status = 'loading'; state.error = null })
+      .addCase(resetPassword.fulfilled, (state) => { state.status = 'succeeded' })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.payload
       })
   },
 })

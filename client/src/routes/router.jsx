@@ -17,6 +17,9 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminOrders from "@/pages/admin/AdminOrders";
 import AdminUsers from "@/pages/admin/AdminUsers";
 import AdminProducts from "@/pages/admin/AdminProducts";
+import ForgotPassword from "@/pages/ForgotPassword";
+import VerifyOTP from "@/pages/VerifyOTP";
+import ResetPassword from "@/pages/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +33,9 @@ export const router = createBrowserRouter([
       { path: "menu", element: <Menu /> },
       { path: "menu/:id", element: <ProductDetail /> },
       { path: "about", element: <About /> },
+      { path: "forgot-password", element: <ForgotPassword /> },
+      { path: "verify-otp", element: <VerifyOTP /> },
+      { path: "reset-password", element: <ResetPassword /> },
 
       // protected - logged in users only
       {
