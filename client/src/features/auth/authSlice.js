@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as authAPI from './authAPI'
+import * as profileAPI from './profileAPI'
 import toast from 'react-hot-toast'
 
 export const register = createAsyncThunk(
@@ -70,6 +71,51 @@ export const resetPassword = createAsyncThunk(
       return data
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to reset password')
+    }
+  }
+)
+
+export const updateProfile = createAsyncThunk(
+  'auth/updateProfile',
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await profileAPI.updateProfileAPI(formData)
+      toast.success('Profile updated')
+      return data.user
+    } catch (err) {
+      const message = err.response?.data?.message || 'Failed to update profile'
+      toast.error(message)
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export const changePassword = createAsyncThunk(
+  'auth/changePassword',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const { data } = await profileAPI.changePasswordAPI(payload)
+      toast.success('Password changed successfully')
+      return data
+    } catch (err) {
+      const message = err.response?.data?.message || 'Failed to change password'
+      toast.error(message)
+      return rejectWithValue(message)
+    }
+  }
+)
+
+export const deleteAccount = createAsyncThunk(
+  'auth/deleteAccount',
+  async (password, { rejectWithValue }) => {
+    try {
+      const { data } = await profileAPI.deleteAccountAPI(password)
+      toast.success('Account deleted')
+      return data
+    } catch (err) {
+      const message = err.response?.data?.message || 'Failed to delete account'
+      toast.error(message)
+      return rejectWithValue(message)
     }
   }
 )
@@ -155,6 +201,17 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.status = 'failed'
         state.error = action.payload
+      })
+
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.user = { ...state.user, ...action.payload }
+      })
+
+      .addCase(deleteAccount.fulfilled, (state) => {
+        state.user = null
+        state.token = null
+        state.isAuthenticated = false
+        localStorage.removeItem('token')
       })
   },
 })
