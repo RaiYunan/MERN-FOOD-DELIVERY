@@ -1,53 +1,54 @@
-import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Star, Flame, Minus, Plus, ShoppingBag } from 'lucide-react'
-import toast from 'react-hot-toast'
-import { useAppDispatch, useAppSelector } from '@/app/hooks'
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ArrowLeft, Star, Flame, Minus, Plus, ShoppingBag } from "lucide-react";
+import toast from "react-hot-toast";
+import { useAppDispatch, useAppSelector } from "@/app/hooks";
 import {
   getProductById,
   clearSelectedProduct,
-} from '@/features/product/productSlice'
-import { addToCart } from '@/features/cart/cartSlice'
+} from "@/features/product/productSlice";
+import { addToCart } from "@/features/cart/cartSlice";
+import ReviewSection from "@/components/ReviewSection";
 
-const spiceDots = { none: 0, mild: 1, medium: 2, hot: 3 }
+const spiceDots = { none: 0, mild: 1, medium: 2, hot: 3 };
 
 const spiceLabel = {
-  none: 'Not spicy',
-  mild: 'Mild',
-  medium: 'Medium spice',
-  hot: 'Hot',
-}
+  none: "Not spicy",
+  mild: "Mild",
+  medium: "Medium spice",
+  hot: "Hot",
+};
 
 function ProductDetail() {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const dispatch = useAppDispatch()
-  const [quantity, setQuantity] = useState(1)
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const [quantity, setQuantity] = useState(1);
 
   const { selected: product, selectedStatus } = useAppSelector(
-    (state) => state.product
-  )
-  const { isAuthenticated } = useAppSelector((state) => state.auth)
+    (state) => state.product,
+  );
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(getProductById(id))
-    return () => dispatch(clearSelectedProduct())
-  }, [dispatch, id])
+    dispatch(getProductById(id));
+    return () => dispatch(clearSelectedProduct());
+  }, [dispatch, id]);
 
-const handleAddToCart = async () => {
-  if (!isAuthenticated) {
-    toast.error('Log in to add items to your cart')
-    navigate('/login')
-    return
+  const handleAddToCart = async () => {
+    if (!isAuthenticated) {
+      toast.error("Log in to add items to your cart");
+      navigate("/login");
+      return;
+    }
+    await dispatch(addToCart({ productId: product._id, quantity }));
+  };
+
+  if (selectedStatus === "loading" || !product) {
+    return <DetailSkeleton />;
   }
-  await dispatch(addToCart({ productId: product._id, quantity }))
-}
 
-  if (selectedStatus === 'loading' || !product) {
-    return <DetailSkeleton />
-  }
-
-  const dots = spiceDots[product.spiceLevel] ?? 0
+  const dots = spiceDots[product.spiceLevel] ?? 0;
 
   return (
     <div className="bg-cream dark:bg-surface-dark min-h-screen">
@@ -69,7 +70,7 @@ const handleAddToCart = async () => {
           {product.image ? (
             <img
               src={
-                product.image.startsWith('http')
+                product.image.startsWith("http")
                   ? product.image
                   : `${import.meta.env.VITE_SOCKET_URL}${product.image}`
               }
@@ -84,12 +85,12 @@ const handleAddToCart = async () => {
 
           <span
             className={`absolute top-4 left-4 w-6 h-6 rounded-[5px] border-2 flex items-center justify-center bg-cream ${
-              product.isVeg ? 'border-cardamom' : 'border-chili'
+              product.isVeg ? "border-cardamom" : "border-chili"
             }`}
           >
             <span
               className={`w-2.5 h-2.5 rounded-full ${
-                product.isVeg ? 'bg-cardamom' : 'bg-chili'
+                product.isVeg ? "bg-cardamom" : "bg-chili"
               }`}
             />
           </span>
@@ -97,7 +98,7 @@ const handleAddToCart = async () => {
 
         <div className="flex flex-col">
           <p className="font-body text-xs uppercase tracking-[0.15em] text-cardamom font-semibold mb-2">
-            {product.category?.replace('_', ' ')}
+            {product.category?.replace("_", " ")}
           </p>
 
           <h1 className="font-display text-3xl md:text-4xl font-bold text-ink dark:text-text-dark leading-tight">
@@ -126,8 +127,8 @@ const handleAddToCart = async () => {
                       size={14}
                       className={
                         i <= dots
-                          ? 'text-chili fill-chili'
-                          : 'text-ink/10 dark:text-text-dark/10'
+                          ? "text-chili fill-chili"
+                          : "text-ink/10 dark:text-text-dark/10"
                       }
                     />
                   ))}
@@ -183,13 +184,15 @@ const handleAddToCart = async () => {
               <ShoppingBag size={18} />
               {product.isAvailable
                 ? `Add to cart - Rs. ${product.price * quantity}`
-                : 'Currently unavailable'}
+                : "Currently unavailable"}
             </button>
           </div>
         </div>
       </div>
+
+      <ReviewSection productId={product._id} />
     </div>
-  )
+  );
 }
 
 function DetailSkeleton() {
@@ -203,7 +206,7 @@ function DetailSkeleton() {
         <div className="h-24 w-full bg-clay-light dark:bg-card-dark rounded animate-pulse mt-4" />
       </div>
     </div>
-  )
+  );
 }
 
-export default ProductDetail
+export default ProductDetail;
